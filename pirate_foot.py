@@ -35,8 +35,8 @@ help_menu = "Usage: pirate_foot [option]...[arg]\n\
 ######### CONFIG ##############
 
 # Path have to have / (slash) on the end
-torrent_path = '/data/DOWNLOAD/torrenty/'
-#torrent_path = './temp_dir/'
+#torrent_path = '/data/DOWNLOAD/torrenty/'
+torrent_path = './temp_dir/'
 
 if not os.path.isdir(torrent_path):
     os.system('mkdir %s' % torrent_path)
@@ -54,9 +54,10 @@ def get_soup(s_url):
         header = { 'User-Agent' : 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/47.0.2526.73 Chrome/47.0.2526.73 Safari/537.36'}
         req = urllib2.Request(s_url, None, header)
         page = urllib2.urlopen(req)
+        print page
     except urllib2.URLError, e:
         print "There was an error: %r" % e
-        #exit()
+        exit()
 
     gzipped = page.info().get('Content-Encoding') == 'gzip'
 
@@ -161,7 +162,6 @@ def get_torrents(surl,tod,season,episode):
 
     if tod == 'all':
         i = 0
-        print 'Downloading all seasons'
         print all_links
         while i < len(all_links):
             for l in all_links[i]:
@@ -172,9 +172,8 @@ def get_torrents(surl,tod,season,episode):
 
     elif tod == 'season':
         if season > len(all_links):
-            print "There was an error: A non-existen season"
+            print "There was an error: A non-existen season.\nYou try to get season %s and there is only %s seasons." % (season, len(all_links))
         else:
-            print 'Downloading whole season : %i' % season
             print all_links[se]
             for l in all_links[se]:
                 link = l.values()[0]
@@ -183,13 +182,10 @@ def get_torrents(surl,tod,season,episode):
 
     elif tod == 'episode':
         if season > len(all_links):
-            print "There was an error: A non-existen season"
+            print "There was an error: A non-existen season.\nYou try to get season %s and there is only %s seasons." % (season, len(all_links))
         elif episode > len(all_links[se]):
-            print episode
-            print len(all_links[se])
-            print "There was an error: A non-existen episode"
+            print "There was an error: A non-existen episode.\nYou try to get episoed %s and this season has only %s episodes." % (episode, len(all_links[se]))
         else:
-            print 'Downloading episode : %i from season : %i' % (episode,season)
             print all_links[se][-ep]
             link = all_links[se][-ep].values()[0]
             get_file(link)
